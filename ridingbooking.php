@@ -34,7 +34,9 @@ if (is_admin()) {
 }
 function add_main_menu() {
     if (is_admin()) {
-        add_menu_page('Riding Booking1', 'Riding Booking', 'administrator', 'ttttt', array("Admin", "indexAction"), '', 2);
+        add_menu_page('Riding Booking', 'Riding Booking', 'administrator', 'Riding_Booking', array("Admin", "indexAction"), 'icon', 2);
+        add_submenu_page('Riding_Booking', 'Setting', 'Setting', 'administrator', 'Riding_Booking_Sub_1', array("Admin", "indexAction"));
+        add_submenu_page('Riding_Booking', 'test', 'test', 'administrator', 'Riding_Booking_Sub_2', array("Admin", "indexAction"));
     }
 }
 spl_autoload_register(function ($className) {

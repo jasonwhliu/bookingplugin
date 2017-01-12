@@ -5,6 +5,65 @@ class User {
     const P_USER_CAPABILITY       = 'booking_view';
     const P_USER_ADMIN_CAPABILITY = 'booking_all';
     public function __construct() {}
+    /*
+    $args = array(
+    'blog_id'      => $GLOBALS['blog_id'],
+    'role'         => '',
+    'meta_key'     => '',
+    'meta_value'   => '',
+    'meta_compare' => '',
+    'meta_query'   => array(),
+    'include'      => array(),
+    'exclude'      => array(),
+    'orderby'      => 'login',
+    'order'        => 'ASC',
+    'offset'       => '',
+    'search'       => '',
+    'number'       => '',
+    'count_total'  => false,
+    'fields'       => 'all',
+    'who'          => ''
+    );
+     */
+    public function getUserList($page = 0, $count = 20) {
+        $params = array(
+            'role'   => self::P_USER_NAME,
+            'offset' => $page * $count,
+            'number' => $count
+        );
+        $args      = http_build_query($params);
+        $user_list = get_users($args);
+        $ret       = array();
+        foreach ($user_list as $one) {
+            $tmp         = $this->object2array($one);
+            $tmp['meta'] = get_user_meta($tmp['ID']);
+            $ret[]       = $tmp;
+        }
+        return $ret;
+    }
+    public function getUserInfo($userid) {
+        $info         = $this->object2array(get_userdata($userid));
+        $meta_info    = get_user_meta($userid);
+        $info['meta'] = $meta_info;
+        return $info;
+    }
+    public function getCurrentUserInfo() {
+        return get_currentuserinfo();
+    }
+    public function object2array($object) {
+        if (is_object($object)) {
+            foreach ($object as $key => $value) {
+                if (is_object($value)) {
+                    $array[$key] = $this->object2array($value);
+                } else {
+                    $array[$key] = $value;
+                }
+            }
+        } else {
+            $array = $object;
+        }
+        return $array;
+    }
     public function pluginIni() {
         //$role = get_role( 'author' );
         //$role = get_role('administrator');
@@ -34,45 +93,45 @@ class User {
     }
     public function extra_user_profile_fields($user) {
         ?>
-		<h3><?php _e("预约所需额外信息", "blank");?></h3>
-		<table class="form-table">
-			<tr>
-				<th><label for="tel1"><?php _e("tel number");?></label></th>
-				<td>
-					<input type="text" name="tel1" id="tel1" value="<?php echo esc_attr(get_the_author_meta('tel1', $user->ID)); ?>" class="regular-text" /><br />
-					<span class="description"><?php _e("请输入您的电话号码");?></span>
-				</td>
-			</tr>
-			<tr>
-				<th><label for="tel2"><?php _e("tel2");?></label></th>
-				<td>
-					<input type="text" name="tel2" id="tel2" value="<?php echo esc_attr(get_the_author_meta('tel2', $user->ID)); ?>" class="regular-text" /><br />
-					<span class="description"><?php _e("请输入您的备用电话号");?></span>
-				</td>
-			</tr>
-			<tr>
-				<th><label for="address"><?php _e("address");?></label></th>
-				<td>
-					<input type="text" name="address" id="address" value="<?php echo esc_attr(get_the_author_meta('address', $user->ID)); ?>" class="regular-text" /><br />
-					<span class="description"><?php _e("请输入您的住址");?></span>
-				</td>
-			</tr>
-			<tr>
-				<th><label for="address_code"><?php _e("address_code");?></label></th>
-				<td>
-					<input type="text" name="address_code" id="address_code" value="<?php echo esc_attr(get_the_author_meta('address_code', $user->ID)); ?>" class="regular-text" /><br />
-					<span class="description"><?php _e("请输入您的邮编");?></span>
-				</td>
-			</tr>
-			<tr>
-				<th><label for="age"><?php _e("age");?></label></th>
-				<td>
-					<input type="text" name="age" id="age" value="<?php echo esc_attr(get_the_author_meta('age', $user->ID)); ?>" class="regular-text" /><br />
-					<span class="description"><?php _e("请输入您的年龄");?></span>
-				</td>
-			</tr>
-		</table>
-		<?php
+        <h3><?php _e("预约所需额外信息", "blank");?></h3>
+        <table class="form-table">
+            <tr>
+                <th><label for="tel1"><?php _e("tel number");?></label></th>
+                <td>
+                    <input type="text" name="tel1" id="tel1" value="<?php echo esc_attr(get_the_author_meta('tel1', $user->ID)); ?>" class="regular-text" /><br />
+                    <span class="description"><?php _e("请输入您的电话号码");?></span>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="tel2"><?php _e("tel2");?></label></th>
+                <td>
+                    <input type="text" name="tel2" id="tel2" value="<?php echo esc_attr(get_the_author_meta('tel2', $user->ID)); ?>" class="regular-text" /><br />
+                    <span class="description"><?php _e("请输入您的备用电话号");?></span>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="address"><?php _e("address");?></label></th>
+                <td>
+                    <input type="text" name="address" id="address" value="<?php echo esc_attr(get_the_author_meta('address', $user->ID)); ?>" class="regular-text" /><br />
+                    <span class="description"><?php _e("请输入您的住址");?></span>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="address_code"><?php _e("address_code");?></label></th>
+                <td>
+                    <input type="text" name="address_code" id="address_code" value="<?php echo esc_attr(get_the_author_meta('address_code', $user->ID)); ?>" class="regular-text" /><br />
+                    <span class="description"><?php _e("请输入您的邮编");?></span>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="age"><?php _e("age");?></label></th>
+                <td>
+                    <input type="text" name="age" id="age" value="<?php echo esc_attr(get_the_author_meta('age', $user->ID)); ?>" class="regular-text" /><br />
+                    <span class="description"><?php _e("请输入您的年龄");?></span>
+                </td>
+            </tr>
+        </table>
+        <?php
 }
     public function save_extra_user_profile_fields($user_id) {
         if ( ! current_user_can('edit_user', $user_id)) {

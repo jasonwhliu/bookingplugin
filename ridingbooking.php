@@ -29,12 +29,14 @@ if ( ! defined('BOOKING_PLUGIN_DIR')) {
 if ( ! defined('BOOKING_PLUGIN_URL')) {
     define('BOOKING_PLUGIN_URL', untrailingslashit(plugins_url('', BOOKING_FILE)));
 }
-if (is_admin()) {
-    add_action('admin_menu', 'add_main_menu');
-}
+
+add_action('admin_menu', 'add_main_menu');
+//register_activation_hook(BOOKING_FILE, array('Install', 'install'));
+//register_uninstall_hook(BOOKING_FILE, array('Install', 'uninstall'));
+//register_deactivation_hook(BOOKING_FILE, array('Install', 'deactivation'));
 function add_main_menu() {
+    add_menu_page('Riding Booking', 'Riding Booking', User::P_USER_CAPABILITY, 'Riding_Booking', array("Admin", "indexAction"), 'icon', 2);
     if (is_admin()) {
-        add_menu_page('Riding Booking', 'Riding Booking', 'administrator', 'Riding_Booking', array("Admin", "indexAction"), 'icon', 2);
         add_submenu_page('Riding_Booking', 'Setting', 'Setting', 'administrator', 'Riding_Booking_Sub_1', array("Admin", "indexAction"));
         add_submenu_page('Riding_Booking', 'test', 'test', 'administrator', 'Riding_Booking_Sub_2', array("Admin", "indexAction"));
     }
@@ -62,3 +64,4 @@ spl_autoload_register(function ($className) {
         }
     }
 });
+Install::ini();
